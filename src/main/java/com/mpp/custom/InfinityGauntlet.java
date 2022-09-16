@@ -50,7 +50,6 @@ public class InfinityGauntlet {
                 .load(InfinityGauntlet.class.getResourceAsStream("/ost/mpp-namespace-template.yaml"));
 
         listOfEligibleProjects(labels, excludedProjects)
-                .parallelStream()
                 .forEach(project ->
                         deleteTenantNameSpace(templateParameters, resource, project)
                 );

@@ -17,7 +17,7 @@ public class TheOther implements Watcher<Project> {
 
     @Override
     public void eventReceived(Action action, Project project) {
-        LOG.info("entered into event received state");
+        LOG.info("entered into event received state event {} for project {}", action,project.getMetadata().getName());
         if (!(Action.ADDED.equals(action)))
             return;
         LOG.info("EVENT is {}", action);
