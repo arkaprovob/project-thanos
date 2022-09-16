@@ -6,10 +6,11 @@ import io.fabric8.openshift.api.model.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TheOther implements Watcher<Project>{
+public class TheOther implements Watcher<Project> {
     private static final Logger LOG = LoggerFactory.getLogger(TheOther.class);
 
     private final Thanos thanos;
+
     public TheOther(Thanos thanos) {
         this.thanos = thanos;
     }
@@ -17,14 +18,14 @@ public class TheOther implements Watcher<Project>{
     @Override
     public void eventReceived(Action action, Project project) {
         LOG.info("entered into event received state");
-        if(!(Action.ADDED.equals(action)))
+        if (!(Action.ADDED.equals(action)))
             return;
-        LOG.info("EVENT is {}",action);
+        LOG.info("EVENT is {}", action);
         thanos.inform();
     }
 
     @Override
     public void onClose(WatcherException e) {
-        LOG.info("onClose event invoked due to {} ",e.asClientException().getStatus().getStatus());
+        LOG.info("onClose event invoked due to {} ", e.asClientException().getStatus().getStatus());
     }
 }

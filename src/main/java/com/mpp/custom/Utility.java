@@ -5,10 +5,9 @@ import java.util.List;
 
 public class Utility {
 
-    static List<String> fromCommaSeperatedString(String input){
+    static List<String> fromCommaSeperatedString(String input) {
         return Arrays.asList(input.split(","));
     }
-
 
 
 }

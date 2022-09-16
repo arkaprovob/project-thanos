@@ -1,14 +1,13 @@
 package com.mpp.custom;
 
 import org.jboss.resteasy.reactive.RestResponse;
+import org.jboss.resteasy.reactive.RestResponse.ResponseBuilder;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-
-
-import org.jboss.resteasy.reactive.RestResponse.ResponseBuilder;
 
 @Path("/thanos")
 public class Byfrost {
@@ -30,15 +29,24 @@ public class Byfrost {
     @GET
     @Path("count")
     @Produces(MediaType.TEXT_PLAIN)
-    public RestResponse<Integer> noOfEligibleProjects(){
+    public RestResponse<Integer> noOfEligibleProjects() {
         return ResponseBuilder.ok(thanos.totalPopulation(), MediaType.TEXT_PLAIN_TYPE).status(200).build();
     }
 
-    @GET
+    @DELETE
     @Path("snap_pro_max")
     @Produces(MediaType.TEXT_PLAIN)
-    public RestResponse<String> nukeAllProjects(){
+    public RestResponse<String> nukeAllProjects() {
         thanos.snapProMax();
+        return ResponseBuilder.ok("eligible tenant names are printed in console", MediaType.TEXT_PLAIN_TYPE)
+                .status(200).build();
+    }
+
+    @DELETE
+    @Path("snap")
+    @Produces(MediaType.TEXT_PLAIN)
+    public RestResponse<String> nukeSomeProjects() {
+        thanos.inform();
         return ResponseBuilder.ok("eligible tenant names are printed in console", MediaType.TEXT_PLAIN_TYPE)
                 .status(200).build();
     }

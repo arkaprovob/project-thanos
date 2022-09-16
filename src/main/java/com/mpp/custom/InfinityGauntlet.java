@@ -26,57 +26,57 @@ public class InfinityGauntlet {
         this.oc = oc;
     }
 
-    FilterWatchListDeletable<Project, ProjectList> power(Map<String,String> label){
+    FilterWatchListDeletable<Project, ProjectList> power(Map<String, String> label) {
         return oc.projects().withLabels(label);
     }
 
-    public int noOfTestProjects(Map<String,String> labels, List<String> excludedProjects){
+    public int noOfTestProjects(Map<String, String> labels, List<String> excludedProjects) {
         var projectList = oc.projects().withLabels(labels).list();
         return (int) projectList.getItems().stream()
                 .filter(project -> !excludedProjects.contains(project.getMetadata().getName()))
                 .count();
     }
 
-    public List<Project> listOfEligibleProjects(Map<String,String> labels, List<String> excludedProjects){
+    public List<Project> listOfEligibleProjects(Map<String, String> labels, List<String> excludedProjects) {
         var projectList = oc.projects().withLabels(labels).list();
         return projectList.getItems().stream()
                 .filter(project -> !excludedProjects.contains(project.getMetadata().getName()))
                 .collect(Collectors.toList());
     }
 
-    public void nukeAll(Map<String,String> labels, List<String> excludedProjects,Map<String,String> templateParameters){
+    public void nukeAll(Map<String, String> labels, List<String> excludedProjects, Map<String, String> templateParameters) {
         var resource = oc
                 .templates()
                 .load(InfinityGauntlet.class.getResourceAsStream("/ost/mpp-namespace-template.yaml"));
 
-        listOfEligibleProjects(labels,excludedProjects)
+        listOfEligibleProjects(labels, excludedProjects)
                 .parallelStream()
-                .forEach(project->
-                    deleteTenantNameSpace(templateParameters, resource, project)
+                .forEach(project ->
+                        deleteTenantNameSpace(templateParameters, resource, project)
                 );
     }
 
-    public void nukeSingle(Map<String,String> templateParameters){
+    public void nukeSingle(Map<String, String> templateParameters) {
         var resource = oc
                 .templates()
                 .load(InfinityGauntlet.class.getResourceAsStream("/ost/mpp-namespace-template.yaml"));
-        deleteTenantNameSpace(templateParameters,resource);
+        deleteTenantNameSpace(templateParameters, resource);
     }
 
     private void deleteTenantNameSpace(Map<String, String> templateParameters,
                                        TemplateResource<Template, KubernetesList> resource, Project project) {
-        var projectName = project.getMetadata().getName().replace("spaship--","");
+        var projectName = project.getMetadata().getName().replace("spaship--", "");
         templateParameters
-                .put("NS_NAME",projectName);
+                .put("NS_NAME", projectName);
         LOG.info("applying the following values -> {}", templateParameters);
-        deleteTenantNameSpace(templateParameters,resource);
-    }
-    private void deleteTenantNameSpace(Map<String, String> templateParameters,TemplateResource<Template, KubernetesList> resource){
-        var template= resource.processLocally(templateParameters);
-        oc.resourceList(template).delete();
-        LOG.info("nuked the following environment {}",templateParameters);
+        deleteTenantNameSpace(templateParameters, resource);
     }
 
+    private void deleteTenantNameSpace(Map<String, String> templateParameters, TemplateResource<Template, KubernetesList> resource) {
+        var template = resource.processLocally(templateParameters);
+        oc.resourceList(template).delete();
+        LOG.info("nuked the following environment {}", templateParameters);
+    }
 
 
 }
