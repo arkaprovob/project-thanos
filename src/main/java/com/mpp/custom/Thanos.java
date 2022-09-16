@@ -1,11 +1,16 @@
 package com.mpp.custom;
 
+import io.fabric8.openshift.api.model.Project;
 import io.fabric8.openshift.client.OpenShiftClient;
+import io.quarkus.runtime.StartupEvent;
 import org.eclipse.microprofile.config.ConfigProvider;
+import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +30,7 @@ public class Thanos {
     private final String excludedProjects;
     private final InfinityGauntlet gauntlet;
 
+    private final LadyDeath girlFriend;
 
 
 
@@ -33,14 +39,16 @@ public class Thanos {
         this.tenantName = ConfigProvider.getConfig().getValue("app.tenant.name", String.class);
         excludedProjects = ConfigProvider.getConfig().getValue("app.excluded.projects", String.class);
         this.appCode = ConfigProvider.getConfig().getValue("app.code", String.class);
+        girlFriend = new LadyDeath(this);
+    }
 
+    void infiltrate(@Observes StartupEvent startupEvent) {
+        LOG.info("Watcher deployed!");
+        gauntlet.power(Map.of(LABEL,tenantName)).watch(new TheOther(this));
     }
 
 
-
-
-
-    public int noOfTestTenants(){
+    public int totalPopulation(){
         var labels = Map.of(
                 LABEL,tenantName
         );
@@ -48,7 +56,7 @@ public class Thanos {
         return gauntlet.noOfTestProjects(labels,excludedNs);
     }
 
-    public void snap(){
+    public void snapProMax(){
         var labels = Map.of(
                 LABEL,tenantName
         );
@@ -56,19 +64,27 @@ public class Thanos {
         templateParameters.put("APP_CODE",appCode);
         templateParameters.put("TENANT_NAME",tenantName);
         List<String> excludedNs = Utility.fromCommaSeperatedString(excludedProjects);
-        gauntlet.deleteProjects(labels,excludedNs,templateParameters);
+        gauntlet.nukeAll(labels,excludedNs,templateParameters);
     }
 
+    private void snap(List<Pair<String, Date>> eligibleProjects){
+        eligibleProjects.parallelStream().forEach(entry->{
+            var tParam = Map.of("APP_CODE",appCode,
+                    "TENANT_NAME",tenantName,
+                    "NS_NAME",entry.getValue0()
+                    );
+            gauntlet.nukeSingle(tParam);
+        });
+    }
 
-    public void interceptProjectCreation(){
+    public void inform() {
         var labels = Map.of(
                 LABEL,tenantName
         );
-        var temPlateValues = Map.of();
-        //oc.projects().withLabels(labels).watch(new TheOther(this));
-    }
-
-
-    public void inform() {
+        List<String> excludedNs = Utility.fromCommaSeperatedString(excludedProjects);
+        List<Project> projects = gauntlet.listOfEligibleProjects(labels,excludedNs);
+        var processedRecord = girlFriend.projectsToDelete(projects);
+        LOG.info("the following records has been received {}",processedRecord);
+        snap(processedRecord);
     }
 }

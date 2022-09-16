@@ -16,13 +16,15 @@ public class TheOther implements Watcher<Project>{
 
     @Override
     public void eventReceived(Action action, Project project) {
-        if(!(Action.ADDED.equals(action) || Action.MODIFIED.equals(action)))
+        LOG.info("entered into event received state");
+        if(!(Action.ADDED.equals(action)))
             return;
+        LOG.info("EVENT is {}",action);
         thanos.inform();
     }
 
     @Override
     public void onClose(WatcherException e) {
-
+        LOG.info("onClose event invoked due to {} ",e.asClientException().getStatus().getStatus());
     }
 }

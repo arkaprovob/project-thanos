@@ -10,7 +10,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.jboss.resteasy.reactive.RestResponse.ResponseBuilder;
 
-@Path("/")
+@Path("/thanos")
 public class Byfrost {
 
     private final Thanos thanos;
@@ -24,22 +24,23 @@ public class Byfrost {
     @Path("health")
     @Produces(MediaType.TEXT_PLAIN)
     public RestResponse<String> hello() {
-        return ResponseBuilder.ok("avive!", MediaType.TEXT_PLAIN_TYPE).status(200).build();
+        return ResponseBuilder.ok("alive!", MediaType.TEXT_PLAIN_TYPE).status(200).build();
     }
 
     @GET
-    @Path("tenant_count")
+    @Path("count")
     @Produces(MediaType.TEXT_PLAIN)
-    public RestResponse<Integer> totalTenants(){
-        return ResponseBuilder.ok(thanos.noOfTestTenants(), MediaType.TEXT_PLAIN_TYPE).status(200).build();
+    public RestResponse<Integer> noOfEligibleProjects(){
+        return ResponseBuilder.ok(thanos.totalPopulation(), MediaType.TEXT_PLAIN_TYPE).status(200).build();
     }
 
     @GET
-    @Path("delete_all_tenant")
+    @Path("snap_pro_max")
     @Produces(MediaType.TEXT_PLAIN)
-    public RestResponse<String> printTenatInfoOnConsole(){
-        thanos.snap();
-        return ResponseBuilder.ok("eligible tenant names are printed in console", MediaType.TEXT_PLAIN_TYPE).status(200).build();
+    public RestResponse<String> nukeAllProjects(){
+        thanos.snapProMax();
+        return ResponseBuilder.ok("eligible tenant names are printed in console", MediaType.TEXT_PLAIN_TYPE)
+                .status(200).build();
     }
 
 }
