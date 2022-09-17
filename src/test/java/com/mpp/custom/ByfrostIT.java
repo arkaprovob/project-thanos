@@ -1,3 +1,4 @@
+/*
 package com.mpp.custom;
 
 import io.quarkus.test.junit.QuarkusIntegrationTest;
@@ -6,3 +7,4 @@ import io.quarkus.test.junit.QuarkusIntegrationTest;
 public class ByfrostIT extends ByfrostTest {
     // Execute the same tests but in packaged mode.
 }
+*/

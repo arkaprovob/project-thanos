@@ -1,3 +1,4 @@
+/*
 package com.mpp.custom;
 
 import io.quarkus.test.junit.QuarkusTest;
@@ -12,10 +13,10 @@ public class ByfrostTest {
     @Test
     public void testHelloEndpoint() {
         given()
-                .when().get("/hello")
+                .when().get("/thanos/health")
                 .then()
                 .statusCode(200)
-                .body(is("Hello from RESTEasy Reactive"));
+                .body(is("alive!"));
     }
 
-}
+}*/
