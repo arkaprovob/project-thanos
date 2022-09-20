@@ -30,4 +30,4 @@ jobs:
 
       - name: check If condition
         if: github.event.inputs.env == 'Stage'
-        run: echo "Stage is selected"
+        run: echo "${{ secrets.DEV_API_URL }}"
