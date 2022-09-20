@@ -25,4 +25,4 @@ jobs:
     name: Prebuild Test
     steps:
       - name: Test echo workflow input
-        run: echo "${{ github.event.inputs.env }}"
+        run: echo "Hola ${{ github.event.inputs.env }}"
