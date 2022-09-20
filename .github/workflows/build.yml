@@ -16,6 +16,7 @@ on:
           - Dev
           - Qa
           - Stage
+          - Prod
         required: true
         type: choice
 jobs:
@@ -26,3 +27,7 @@ jobs:
     steps:
       - name: Test echo workflow input
         run: echo "Hola ${{ github.event.inputs.env }}"
+
+      - name: check If condition
+        if: github.event.inputs.env == 'Stage'
+        run: echo "Stage is selected"
