@@ -14,6 +14,10 @@ on:
         description: Bump Version
         default: v1.0.0
         required: true
+      env:
+        description: Select envirinment
+        default: Dev
+        required: true
 jobs:
 
   build:
