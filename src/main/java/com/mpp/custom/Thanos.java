@@ -80,8 +80,13 @@ public class Thanos {
         );
         List<String> excludedNs = Utility.fromCommaSeperatedString(excludedProjects);
         List<Project> projects = gauntlet.listOfEligibleProjects(labels, excludedNs);
-        var processedRecord = girlFriend.projectsToDelete(projects);
+        var processedRecord = girlFriend.selectProjects(projects);
         LOG.info("the following records has been received {}", processedRecord);
+        TheOther.setRecentlyDeletedProjects(processedRecord);
         snap(processedRecord);
+    }
+
+    public String recentlyDeletedProjects(){
+        return TheOther.getRecentlyDeletedProjects().toString();
     }
 }

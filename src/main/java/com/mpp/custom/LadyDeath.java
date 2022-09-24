@@ -1,6 +1,7 @@
 package com.mpp.custom;
 
 import io.fabric8.openshift.api.model.Project;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,28 +16,30 @@ import java.util.stream.Collectors;
 public class LadyDeath {
 
     private static final Logger LOG = LoggerFactory.getLogger(LadyDeath.class);
-    private static final int threshold = 2;
-
+    private final int threshold;
 
     public LadyDeath() {
+        this.threshold = ConfigProvider.getConfig().getValue("app.project.threshold", Integer.class);
     }
 
-    public List<Pair<String, Date>> projectsToDelete(List<Project> eligibleProjects) {
+
+    public List<Pair<String, Date>> selectProjects(List<Project> eligibleProjects) {
 
         int noOfEligibleProjects = eligibleProjects.size();
 
-        if (!(noOfEligibleProjects > threshold)) {
+        boolean condition = noOfEligibleProjects > threshold;
+        if (!condition) {
             LOG.info("tenants are within limits");
             return Collections.emptyList();
         }
 
-        var projectPairs = eligibleProjects.stream().map(entry -> new Pair<String, Date>(
+        var projectPairs = eligibleProjects.stream().map(entry -> new Pair<>(
                 removeTenantFromProjectName(entry.getMetadata().getName()),
                 stringToDate(entry.getMetadata().getCreationTimestamp())))
                 .sorted(Comparator.comparing(Pair::getValue1))
                 .collect(Collectors.toList());
-
-        return projectPairs.stream().limit(noOfEligibleProjects - threshold).collect(Collectors.toList());
+        var upto= noOfEligibleProjects - threshold;
+        return projectPairs.stream().limit(upto).collect(Collectors.toList());
     }
 
     private String removeTenantFromProjectName(String projectName) {

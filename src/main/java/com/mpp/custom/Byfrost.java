@@ -51,4 +51,11 @@ public class Byfrost {
                 .status(200).build();
     }
 
+    @GET
+    @Path("last_deleted_projects")
+    @Produces(MediaType.TEXT_PLAIN)
+    public RestResponse<String> deletedProjectsInLastCycle(){
+        return ResponseBuilder.ok(thanos.recentlyDeletedProjects(),"MediaType.TEXT_PLAIN_TYPE").status(200).build();
+    }
+
 }
