@@ -17,17 +17,18 @@ import javax.inject.Singleton;
 public class Celestial {
     private static final Logger LOG = LoggerFactory.getLogger(Celestial.class);
 
-/*    @Produces
+    @Produces
     @IfBuildProfile("dev")
     public OpenShiftClient configLessOc() {
         LOG.info("creating config-less oc");
         final ConfigBuilder configBuilder = new ConfigBuilder();
         configBuilder.withTrustCerts(true);
         return new DefaultOpenShiftClient(configBuilder.build());
-    }*/
+    }
 
 
     @Produces
+    @DefaultBean
     public OpenShiftClient oc() {
         final ConfigBuilder configBuilder = new ConfigBuilder();
         configBuilder.withTrustCerts(true)
