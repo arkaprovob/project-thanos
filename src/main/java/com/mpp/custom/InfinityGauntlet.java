@@ -7,10 +7,13 @@ import io.fabric8.openshift.api.model.ProjectList;
 import io.fabric8.openshift.api.model.Template;
 import io.fabric8.openshift.client.OpenShiftClient;
 import io.fabric8.openshift.client.dsl.TemplateResource;
+import io.quarkus.runtime.StartupEvent;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -24,6 +27,22 @@ public class InfinityGauntlet {
 
     public InfinityGauntlet(OpenShiftClient oc) {
         this.oc = oc;
+    }
+
+    void onStart(@Observes StartupEvent ev){
+        var accessUrl = oc.config().getConfiguration().getMasterUrl();
+
+        var restriction = ConfigProvider.getConfig().getValue("app.restriction", Integer.class);
+        var allowedCluster = ConfigProvider.getConfig().getValue("app.allowed.masterurl", String.class);
+
+        if( restriction==1 && (!accessUrl.contains(allowedCluster))){
+            LOG.info("This is a potentially dangerous operations hence not permitted, the accessUrl is {} " +
+                    "and restriction is enabled and allowed cluster value is {}",accessUrl,allowedCluster);
+            System.exit(0);
+        }
+
+        LOG.info("cluster url on which the operations will be performed is {}",accessUrl);
+
     }
 
     FilterWatchListDeletable<Project, ProjectList> power(Map<String, String> label) {
