@@ -41,7 +41,9 @@ public class InfinityGauntlet {
             System.exit(0);
         }
 
-        LOG.info("cluster url on which the operations will be performed is {}",accessUrl);
+        LOG.info("\n*******************\n");
+        LOG.info("\n    cluster url on which the operations will be performed is {} \n",accessUrl);
+        LOG.info("\n*******************\n");
 
     }
 
